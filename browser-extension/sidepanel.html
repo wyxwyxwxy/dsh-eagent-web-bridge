@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EAgent 会话</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; padding: 16px; color: #1a1a1a; font-size: 14px; }
+    h1 { font-size: 16px; margin: 0 0 12px; }
+    .hint { background: #f6f7f9; border-radius: 10px; padding: 12px; line-height: 1.7; font-size: 13px; color: #444; }
+    code { background: #eceff3; padding: 1px 5px; border-radius: 4px; }
+    button { width: 100%; padding: 9px; margin-top: 10px; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; background: #1a1a1a; color: #fff; }
+  </style>
+</head>
+<body>
+  <h1>🐋 EAgent · DeepSeek 多账号</h1>
+  <div class="hint">
+    <p>本侧边栏配合本地 DSH 插件 <code>eagent-web-bridge</code> 使用。</p>
+    <p>打开 <code>chat.deepseek.com</code> 完成登录后，扩展会自动识别登录态 Cookie 并同步到本地插件，<b>无需手动导入</b>。</p>
+    <p>同步状态与账号管理可在 DSH Web UI 中通过 <code>eagent_accounts</code> 工具查看。</p>
+  </div>
+  <button id="openBtn">打开 DeepSeek 网页</button>
+  <button id="syncBtn">立即同步 Cookie</button>
+  <script>
+    const send = t => new Promise(r => chrome.runtime.sendMessage({ type: t }, r))
+    document.getElementById('openBtn').onclick = () => send('OPEN_DEEPSEEK')
+    document.getElementById('syncBtn').onclick = () => send('SYNC_NOW')
+  </script>
+</body>
+</html>
