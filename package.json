@@ -1,0 +1,49 @@
+{
+  "name": "@eagent/dsh-web-bridge",
+  "version": "1.0.0",
+  "description": "DeepSeek Harness 网页端多账号桥接插件：多账号管理、可调输入延迟、全局/单账号并发限制、会话历史、Cookie 导入与最新网页端适配。",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "cordis",
+    "browser-bridge",
+    "multi-account"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=24.22.3 || >=26.13.1"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": ">=0.2.3-alpha.1",
+    "@deepseek-ai/dsh-tools": ">=0.2.3-alpha.1",
+    "@deepseek-ai/schemastery": ">=0.2.3-alpha.1"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "compat": {
+      "dsh": ">=0.2.3-alpha.1",
+      "profile": [
+        "web"
+      ]
+    }
+  },
+  "scripts": {
+    "verify": "node scripts/verify.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "author": ""
+}
