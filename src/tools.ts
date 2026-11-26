@@ -7,6 +7,10 @@ import { TaskScheduler } from './scheduler.js'
 import { History } from './history.js'
 import { HumanTyper } from './typing.js'
 import { WebAdapter } from './webadapter.js'
+import { ModelProvider, parseProviderConfig } from './model-provider.js'
+import type { CookieBridge } from './cookie-bridge.js'
+import type { DshCapability } from './compat.js'
+import { describeCapabilities } from './compat.js'
 
 export interface ToolDeps {
   ctx: Context
@@ -17,6 +21,9 @@ export interface ToolDeps {
   history: History
   web: WebAdapter
   typer: HumanTyper
+  modelProvider: ModelProvider
+  cookieBridge?: CookieBridge
+  cap: DshCapability
   /** 真正执行一次网页任务：注入账号 Cookie、输入文本、等待回复并抓取。 */
   executeOnWeb: (accountId: string, text: string, taskId: string) => Promise<string>
 }
@@ -220,6 +227,58 @@ export function registerTools(d: ToolDeps): () => void {
         },
       }
     },
+  }))
+
+  // ---------- 模型提供方注册（加入模型选择器）----------
+  ctx.tools.register(defineTool({
+    name: 'eagent_model_register',
+    description: '注册一个 OpenAI 兼容模型到 DSH Web 端模型选择器。参数：providerId/displayName/baseUrl/apiKey/models（模型 id 数组或 [{id,label,capabilities}]）/protocol。兼容 0.2.2-rc.5 与 0.2.3-alpha。',
+    parameters: {
+      providerId: { type: 'string', required: true, description: '小写字母开头的唯一 Provider ID' },
+      displayName: { type: 'string', description: '选择器显示名称' },
+      baseUrl: { type: 'string', required: true, description: 'OpenAI 兼容 Base URL（不含 /chat/completions）' },
+      apiKey: { type: 'string', required: true, description: 'API Key' },
+      protocol: { type: 'string', description: 'openai-completions | openai-responses | anthropic-messages，默认 openai-completions' },
+      models: { type: 'array', required: true, description: '模型列表' },
+      defaultModel: { type: 'string', description: '可选，默认模型 id' },
+    },
+    output: textOut,
+    async execute(args: any) {
+      const cfg = parseProviderConfig(args)
+      const r = d.modelProvider.register(cfg)
+      return r.message
+    },
+  }))
+
+  ctx.tools.register(defineTool({
+    name: 'eagent_model_list',
+    description: '列出本插件已注册到选择器的模型 Provider。',
+    parameters: {},
+    output: textOut,
+    async execute() {
+      const list = d.modelProvider.list()
+      return list.length ? `已注册 Provider：${list.join(', ')}` : '尚未注册任何 Provider'
+    },
+  }))
+
+  ctx.tools.register(defineTool({
+    name: 'eagent_cookie_sync',
+    description: '返回本地 Cookie 桥接服务的地址与 token，供浏览器扩展自动同步 deepseek.com 登录态（无需手动导入）。扩展向 bridgeUrl/cookie POST Bearer token + cookies 即可。',
+    parameters: {},
+    output: textOut,
+    async execute() {
+      if (!d.cookieBridge) return 'Cookie 桥接服务未启用'
+      // 连接信息由 index 写入模块级变量，这里从 ctx 取
+      return (d.ctx as any).__EAGENT_BRIDGE_INFO__ || 'Cookie 桥接服务启动信息暂不可用'
+    },
+  }))
+
+  ctx.tools.register(defineTool({
+    name: 'eagent_compat',
+    description: '返回当前 DSH 版本能力探测结果（deepseekAuth / llm 注册形态 / agents 结构），用于核对跨版本兼容。',
+    parameters: {},
+    output: textOut,
+    async execute() { return describeCapabilities(d.cap) },
   }))
 
   return () => { /* ctx 注册随 fiber 自动撤销，无需手动移除 */ }
