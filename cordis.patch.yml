@@ -1,0 +1,44 @@
+# DSH Bundle patch —— 由 package.json 的 dsh.bundle.patch 指向。
+# 该 patch 只贡献一条插件配置行；上层 Profile / 用户 Patch 仍可覆盖任意字段。
+- insert:
+    - id: eagent-web-bridge
+      name: '@eagent/dsh-web-bridge'
+      config:
+        # —— 输入拟人化 ——
+        # 每个字符的平均输入延迟（毫秒）。0 = 瞬时输入。
+        typingDelayMs: 45
+        # 抖动比例（0~1），实际延迟 = delay * (1 ± jitter)，模拟真人手速波动。
+        typingJitter: 0.35
+        # 整段消息按词/标点分段输入（更像真人），关闭则逐字符。
+        chunkedTyping: true
+
+        # —— 并发限制 ——
+        # 全局最大并发任务数。
+        maxConcurrency: 3
+        # 单个账号同时最多执行的任务数（防止同账号触发风控）。
+        perAccountConcurrency: 1
+        # 同一账号两次任务之间的最小间隔（毫秒，冷却）。
+        accountCooldownMs: 2000
+
+        # —— 多账号 ——
+        # 账号列表在运行时通过 eagent_* 工具或 profiles/eagent/accounts.json 管理。
+        # 这里只声明存储位置（相对 DSH_HOME）。
+        storeDir: 'eagent'
+
+        # —— 历史对话 ——
+        # 是否记录每次网页对话的输入/输出到历史。
+        historyEnabled: true
+        # 历史保留天数，0 = 永久。
+        historyRetentionDays: 30
+
+        # —— 网页端适配（对齐 chat.deepseek.com 2026-09 起改动）——
+        web:
+          # 2026-09-10 起「快速/专家/识图」三模式合并为统一「智能模式」，
+          # 不再有模式切换按钮；此开关让快照/点击逻辑不再依赖旧的模式按钮。
+          unifiedSmartMode: true
+          # 额度管理：输入框上方可能出现额度提示条、quotas.is_exhausted 状态；
+          # 页面可见时每 5 分钟轮询一次额度。
+          quotaPollingMs: 300000
+          detectQuotaExhausted: true
+          # 聊天记录搜索（2026-05 灰度）——允许按关键词检索历史对话。
+          enableHistorySearch: true
