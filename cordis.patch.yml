@@ -42,3 +42,12 @@
           detectQuotaExhausted: true
           # 聊天记录搜索（2026-05 灰度）——允许按关键词检索历史对话。
           enableHistorySearch: true
+
+        # —— Cookie 自动识别（浏览器扩展免手动导入）——
+        cookieBridge:
+          # 是否启用本地桥接服务（仅监听 127.0.0.1，Bearer token 校验）。
+          enabled: true
+          # 0 = 随机端口；扩展可通过 /health 探测或读 bridge-connection.json。
+          port: 17890
+          # 是否允许扩展触发打开 DeepSeek 网页。
+          allowOpen: true
