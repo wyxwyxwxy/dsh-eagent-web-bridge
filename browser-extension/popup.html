@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EAgent Cookie Bridge</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; width: 300px; margin: 0; padding: 16px; color: #1a1a1a; }
+    h1 { font-size: 16px; margin: 0 0 4px; }
+    .sub { font-size: 12px; color: #666; margin-bottom: 14px; }
+    .card { background: #f6f7f9; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+    .row { display: flex; justify-content: space-between; font-size: 13px; margin: 4px 0; }
+    .k { color: #666; } .v { font-weight: 600; }
+    .ok { color: #e53935; } .off { color: #999; }
+    button { width: 100%; padding: 9px; margin-top: 8px; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; }
+    .primary { background: #1a1a1a; color: #fff; }
+    .ghost { background: #eef0f3; color: #333; }
+    input { width: 100%; box-sizing: border-box; padding: 8px; margin-top: 6px; border: 1px solid #ddd; border-radius: 6px; font-size: 12px; }
+    #msg { font-size: 12px; min-height: 18px; color: #555; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h1>🐋 EAgent Cookie Bridge</h1>
+  <div class="sub">自动识别 DeepSeek 登录态，免手动导入</div>
+
+  <div class="card">
+    <div class="row"><span class="k">桥接服务</span><span class="v" id="bridge">—</span></div>
+    <div class="row"><span class="k">连接状态</span><span class="v" id="status">—</span></div>
+    <div class="row"><span class="k">已识别 Cookie</span><span class="v" id="cookies">—</span></div>
+    <div class="row"><span class="k">上次同步</span><span class="v" id="lastSync">—</span></div>
+  </div>
+
+  <button class="primary" id="btnOpen">打开 DeepSeek 网页并识别</button>
+  <button class="ghost" id="btnSync">立即同步 Cookie</button>
+  <button class="ghost" id="btnConnect">自动连接本地服务</button>
+
+  <div class="card" style="margin-top:12px;">
+    <div class="k" style="font-size:12px;">高级：手动填写连接信息（随机端口时用）</div>
+    <input id="bridgeUrl" placeholder="http://127.0.0.1:端口" />
+    <input id="token" placeholder="Bearer token" />
+    <button class="ghost" id="btnSave">保存连接信息</button>
+  </div>
+
+  <div id="msg"></div>
+  <script src="popup.js"></script>
+</body>
+</html>
