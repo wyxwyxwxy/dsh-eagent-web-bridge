@@ -1,0 +1,50 @@
+{
+  "manifest_version": 3,
+  "name": "EAgent Cookie Bridge for DeepSeek",
+  "version": "1.1.0",
+  "description": "自动识别 chat.deepseek.com 登录态 Cookie 并同步到本地 DSH eagent 插件，无需手动导入。",
+  "permissions": [
+    "cookies",
+    "tabs",
+    "storage",
+    "sidePanel",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "*://*.deepseek.com/*",
+    "http://127.0.0.1/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://chat.deepseek.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "eagent-cookie-bridge@example.com",
+      "strict_min_version": "140.0"
+    }
+  }
+}
