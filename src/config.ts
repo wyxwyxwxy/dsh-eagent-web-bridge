@@ -11,6 +11,15 @@ export interface WebAdaptConfig {
   enableHistorySearch: boolean
 }
 
+export interface CookieBridgeConfigFile {
+  /** 是否启用本地 Cookie 桥接服务（供浏览器扩展自动同步登录态）。 */
+  enabled: boolean
+  /** 监听端口，0 = 随机端口。 */
+  port: number
+  /** 是否允许扩展触发打开 DeepSeek 网页。 */
+  allowOpen: boolean
+}
+
 export interface Config {
   /** 每个字符的平均输入延迟（ms）。0 = 瞬时。 */
   typingDelayMs: number
@@ -32,6 +41,8 @@ export interface Config {
   historyRetentionDays: number
   /** 网页端适配。 */
   web: WebAdaptConfig
+  /** Cookie 自动识别桥接。 */
+  cookieBridge: CookieBridgeConfigFile
 }
 
 /**
@@ -53,5 +64,10 @@ export const Config = Schema.object({
     quotaPollingMs: Schema.number().default(300000),
     detectQuotaExhausted: Schema.boolean().default(true),
     enableHistorySearch: Schema.boolean().default(true),
+  }).default({}),
+  cookieBridge: Schema.object({
+    enabled: Schema.boolean().default(true),
+    port: Schema.number().default(0),
+    allowOpen: Schema.boolean().default(true),
   }).default({}),
 })
