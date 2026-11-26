@@ -31,17 +31,58 @@
 
 ## 安装
 
+**web profile：**
+
 ```sh
 dsh plugin --profile web add github:wyxwyxwxy/dsh-eagent-web-bridge
 # 固定版本（alpha 期推荐）
 dsh plugin --profile web add github:wyxwyxwxy/dsh-eagent-web-bridge#<commit-sha>
 ```
 
+**desktop profile（Windows 桌面版同样支持）：**
+
+```sh
+dsh plugin --profile desktop add github:wyxwyxwxy/dsh-eagent-web-bridge
+```
+
 验证加载：
 
 ```sh
-dsh --profile web --dump-config   # 确认 eagent-web-bridge 在插件树
+dsh --profile web --dump-config      # web
+dsh --profile desktop --dump-config  # desktop
 ```
+
+### Windows 排错：`ERR_PNPM_GIT_RESOLVE_FAILED` / `'git' 不是内部或外部命令`
+
+`dsh plugin add github:...` 底层靠 pnpm 调用 `git ls-remote` 解析 GitHub 依赖。**如果 Windows 没装 Git，就会报**：
+
+```
+Failed to resolve git dependency "https://github.com/...":
+git ls-remote failed: 'git' 不是内部或外部命令，也不是可运行的程序
+```
+
+这与插件版本无关。二选一解决：
+
+**方案 A（推荐，一劳永逸）：安装 Git for Windows**
+1. 下载安装 https://git-scm.com/download/win
+2. 安装时"Adjusting your PATH"选 **Git from the command line and also from 3rd-party software**（默认项）
+3. **完全关闭并重新打开** PowerShell / 终端（让 PATH 生效）
+4. 验证：`git --version` 能输出版本号即可
+5. 重新运行 `dsh plugin --profile desktop add github:wyxwyxwxy/dsh-eagent-web-bridge`
+
+> 报错里建议的 `git config --global url."git@github.com:".insteadOf ...` 是给"能连 SSH 但连不上 HTTPS"的情况；你是 git 命令根本不存在，配了也没用，先装 Git。
+
+**方案 B（不装 Git，用本地 link 装）：**
+1. 下载源码包 `dsh-eagent-web-bridge-source.zip`（或仓库 `Code → Download ZIP`），解压到本地目录，例如 `C:\Users\admin\dsh-eagent-web-bridge`
+2. 运行（用**你自己解压后的实际路径**）：
+
+```powershell
+dsh plugin --profile desktop add link:C:\Users\admin\dsh-eagent-web-bridge
+```
+
+`link:` 走本地文件系统，完全不调用 git，可绕过该错误。
+
+> 另注：0.2.2-rc.5 官方要求 **Node.js ≥ 24.9.0**；若装完 Git 后又提示 Node 版本，请先升级 Node 到 24.9.0+。
 
 ---
 
